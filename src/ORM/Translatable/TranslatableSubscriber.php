@@ -216,7 +216,8 @@ class TranslatableSubscriber extends AbstractSubscriber
     private function mapTranslation(ClassMetadata $classMetadata)
     {
         if (!$classMetadata->hasAssociation('translatable')) {
-            $classMetadata->mapManyToOne([
+            $cache = $classMetadata->cache ? ['cache' => $classMetadata->cache ] : [];
+            $classMetadata->mapManyToOne(array_merge([
                 'fieldName'    => 'translatable',
                 'inversedBy'   => 'translations',
                 'cascade'      => ['persist', 'merge'],
@@ -227,7 +228,7 @@ class TranslatableSubscriber extends AbstractSubscriber
                     'onDelete'             => 'CASCADE'
                 ]],
                 'targetEntity' => $classMetadata->getReflectionClass()->getMethod('getTranslatableEntityClass')->invoke(null),
-            ]);
+            ], $cache));
         }
 
         $name = $classMetadata->getTableName().'_unique_translation';
