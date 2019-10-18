@@ -200,7 +200,8 @@ class TranslatableSubscriber extends AbstractSubscriber
     private function mapTranslatable(ClassMetadata $classMetadata)
     {
         if (!$classMetadata->hasAssociation('translations')) {
-            $classMetadata->mapOneToMany([
+            $cache = $classMetadata->cache ? ['cache' => $classMetadata->cache ] : [];
+            $classMetadata->mapOneToMany(array_merge([
                 'fieldName'     => 'translations',
                 'mappedBy'      => 'translatable',
                 'indexBy'       => 'locale',
@@ -208,7 +209,7 @@ class TranslatableSubscriber extends AbstractSubscriber
                 'fetch'         => $this->translatableFetchMode,
                 'targetEntity'  => $classMetadata->getReflectionClass()->getMethod('getTranslationEntityClass')->invoke(null),
                 'orphanRemoval' => true
-            ]);
+            ], $cache));
         }
     }
 
